@@ -7,6 +7,7 @@ class LogisticRegression:
         self.weights = None
         self.learning_rate = 0.03
         self.iterations = 1000
+        self.batch_size = 32
 
     def initialize_weights(self, num_features, num_classes):
         self.weights = np.random.normal(0, 1, (num_features, num_classes))
@@ -20,12 +21,20 @@ class LogisticRegression:
         for _ in range(self.iterations):
             
             # randomize the indices of the data and select a random sample and its corresponding target
-            index = np.random.randint(num_samples)
-            x_sample = data[index]
-            y_sample = targets[index]
+            index = np.random.permutation(num_samples)
+            data = data[index]
+            targets = targets[index]
             
-            # Compute the model's prediction and calculate error
-            z = np.dot(data, self.weights)
+            for i in range(0, num_samples, self.batch_size):
+                
+                x_batch = data[i:i + self.batch_size]
+                y_batch = targets[i:i + self.batch_size]
+                
+                # Compute the model's prediction and calculate error
+                z = np.dot(x_batch, self.weights)
+                output = softmax(z)
+                print(output)
+                break
             break
                 
 
