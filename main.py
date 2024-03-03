@@ -3,9 +3,12 @@ from logreg import LogisticRegression
 
 def main():
     
-    path = "data/water.train"
+    path = "data/loans.train"
     X, T = loadDataset(path)
     T = toHotEncoding(T, 2)
+    
+    # Add bias term to inputs
+    X = np.hstack([X, np.ones((X.shape[0], 1))])
     
     model = LogisticRegression()
     model.fit(X, T)
