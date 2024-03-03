@@ -27,14 +27,17 @@ class LogisticRegression:
             
             for i in range(0, num_samples, self.batch_size):
                 
+                # Grab the sample batches from dataset
                 x_batch = data[i:i + self.batch_size]
                 y_batch = targets[i:i + self.batch_size]
                 
                 # Compute the model's prediction and calculate error
                 z = np.dot(x_batch, self.weights)
                 output = softmax(z)
-                print(output)
-                break
-            break
+                error = y_batch - output
+                gradient = np.dot(x_batch.T, error)
+                
+                # update the weights
+                self.weights -= np.multiply(self.learning_rate, gradient)
                 
 
