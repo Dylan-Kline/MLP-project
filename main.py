@@ -9,4 +9,8 @@ def main():
     
     model = LogisticRegression()
     model.fit(X, T)
+    Y = model.predict(X)
+    acc_train1 = accuracy(Y, T)
+    print(acc_train1)
+    
 main() 

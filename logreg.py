@@ -6,8 +6,8 @@ class LogisticRegression:
     def __init__(self):
         self.weights = None
         self.learning_rate = 0.03
-        self.iterations = 1000
-        self.batch_size = 32
+        self.iterations = 10
+        self.batch_size = 16
 
     def initialize_weights(self, num_features, num_classes):
         self.weights = np.random.normal(0, 1, (num_features, num_classes))
@@ -34,10 +34,17 @@ class LogisticRegression:
                 # Compute the model's prediction and calculate error
                 z = np.dot(x_batch, self.weights)
                 output = softmax(z)
-                error = y_batch - output
+                error = output - y_batch
                 gradient = np.dot(x_batch.T, error)
                 
                 # update the weights
-                self.weights -= np.multiply(self.learning_rate, gradient)
+                self.weights -= self.learning_rate * gradient
                 
+    def predict(self, X):
+        z = np.dot(X, self.weights)
+        prediction = softmax(z)
+        return prediction
+    
+    def accuracy(y_true, y_pred):
+        return np.sum(np.argmax(y_true,axis=1) == np.argmax(y_pred, axis=1)) / y_true.shape[0]  
 
