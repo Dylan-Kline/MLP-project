@@ -12,12 +12,11 @@ def toHotEncoding(t, k):
     ans[np.arange(t.shape[0]), np.reshape(t, t.shape[0]).astype(int)] = 1
     return ans
 
-
 def loadDataset(filename):
     """ Read CSV data from file.
     Returns X, Y values with hot targets. """
     labels=open(filename).readline().split(',')
-    data=np.loadtxt(filename, delimiter=',', skiprows=1)
+    data=np.loadtxt(filename, delimiter=',')
     X=data[:,:-1] # observations
     T=data[:,-1]  # targets, discrete categorical features (integers)
     K=1 + np.max(T).astype(int) # number of categories
