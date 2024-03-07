@@ -6,11 +6,11 @@ class LogisticRegression:
     def __init__(self):
         self.weights = None
         self.learning_rate = 0.03
-        self.iterations = 20000
+        self.iterations = 1000
         self.batch_size = 16
 
     def initialize_weights(self, num_features, num_classes):
-        self.weights = np.random.normal(0, 1, (num_features, num_classes)) # +1 for bias term
+        self.weights = np.random.normal(0, 1, (num_features, num_classes)) # num features contains +1 for bias term
 
     def fit(self, data, targets):
 
@@ -46,7 +46,5 @@ class LogisticRegression:
         z = np.dot(X, self.weights)
         prediction = softmax(z)
         return prediction
-    
-    def accuracy(y_true, y_pred):
-        return np.sum(np.argmax(y_true,axis=1) == np.argmax(y_pred, axis=1)) / y_true.shape[0]  
+     
 
