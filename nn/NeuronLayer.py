@@ -1,9 +1,10 @@
+from util.util import *
 import numpy as np
 from numpy.typing import NDArray
 
 class NeuronLayer:
 
-    def __init__(self, num_incoming_connections, num_neurons, activation_func, deriv_activation):
+    def __init__(self, num_incoming_connections, num_neurons, activation_func, deriv_activation=None):
         self.weights = np.random.randn(num_neurons, num_incoming_connections) # num units in layer X num weights to layer
         self.activation_func = activation_func
         self.deriv_func = deriv_activation
