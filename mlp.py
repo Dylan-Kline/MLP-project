@@ -5,20 +5,13 @@ from numpy.typing import NDArray
 class MultilayerPerceptron:
 
     '''
-        Questions to consider:
-        
-        Two output units?
-        How would you use vectorization with hidden unit objects?
-        Is it possible to perform the calculations of each layer all in parallel using np.dot if
-        I were to use objects?
+        Makes use of the idea that each layer is itself a vector, to thus vectorize propagation of input.
         '''
     def __init__(self):
         self.num_hidden_layers = None
         self.learning_rate = 0.03
         self.iterations = 1000
         self.batch_size = 16
-        self.hidden_units = None # an array of arrays, with each inner array corresponding to a single layer
-        self.output_units = None # a 1D array of softmax output units
 
     def fit(self, x: NDArray, y: NDArray):
         '''
@@ -45,6 +38,6 @@ class MultilayerPerceptron:
                 # compute errors and back prop
     
     def propagate(self, inputs: NDArray):
+        pass
 
-
-        for unit in self.hidden_units
+        #for unit in self.hidden_units

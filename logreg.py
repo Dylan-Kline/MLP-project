@@ -41,6 +41,10 @@ class LogisticRegression:
                 
                 # update the weights
                 self.weights -= self.learning_rate * gradient
+  
+                if _ % 100 == 0:
+                    print(f"Current accuracy of the model: {accuracy(y_batch, output)} ")
+
                 
     def predict(self, X):
         z = np.dot(X, self.weights)
