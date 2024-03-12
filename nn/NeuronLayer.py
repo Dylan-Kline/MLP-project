@@ -6,7 +6,6 @@ class NeuronLayer:
 
     def __init__(self, num_incoming_connections, num_neurons, activation_func, deriv_activation=None):
         self.weights = np.random.randn(num_neurons, num_incoming_connections + 1) # num units in layer X num weights to layer, +1 for bias
-        print("Layer weights: ", self.weights)
         self.activation_func = activation_func
         self.deriv_func = deriv_activation
 
@@ -18,6 +17,7 @@ class NeuronLayer:
             '''
         # Add a column of ones to the input data for the bias
         bias_input = np.hstack([input, np.ones((input.shape[0], 1))])
+        #print(bias_input)
 
         self.input = bias_input
         self.output = self.activation_func(np.dot(self.input, self.weights.T))
@@ -36,12 +36,12 @@ class NeuronLayer:
         gradient = np.dot(error.T, self.input)
 
         # calculate input error for previous layer
-        input_error = np.dot(error, self.weights)
+        input_error = np.dot(error, self.weights[:, :-1])
 
         # update the weights for this layer
         self.weights -= learning_rate * gradient
 
-        return input_error[:, :-1]
+        return input_error
     
     @staticmethod
     def tanh(z: NDArray):
@@ -61,7 +61,7 @@ class NeuronLayer:
             return : output from tanh prime
             '''
         
-        return 1 - NeuronLayer.tanh(z) ** 2
+        return (1 - (NeuronLayer.tanh(z) ** 2))
     
     def print_weights(self):
         print(self.weights.shape)

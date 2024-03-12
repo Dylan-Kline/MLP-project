@@ -18,10 +18,10 @@ class OutputLayer(NeuronLayer):
         gradient = np.dot(output_error.T, self.input)
 
         # input error
-        input_error = np.dot(output_error, self.weights)
+        input_error = np.dot(output_error, self.weights[:, :-1])
 
         # update the weights for this layer
         self.weights -= learning_rate * gradient
 
         # calculate input error for previous layer
-        return input_error[:, :-1]
+        return input_error
