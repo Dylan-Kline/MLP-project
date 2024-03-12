@@ -12,7 +12,7 @@ class MultilayerPerceptron:
     def __init__(self):
 
         # Hyperparameters for model
-        self.learning_rate = 0.3
+        self.learning_rate = 0.03
         self.iterations = 1000
         self.batch_size = 16 # size of stochastic batches
 
@@ -40,14 +40,14 @@ class MultilayerPerceptron:
             @ x : numpy array of input data
             @ y : numpy array of one-hot encoding of the true outputs
             '''
-        
+
         num_samples, num_features = x.shape # rows and columns of the input data x, respectively
         
         # initialize model weights
         self.initialize_mlp(num_features)
 
         # for each iteration propagate the inputs and back prop the error
-        for _ in range(self.iterations):
+        for l in range(self.iterations):
 
             # shuffle the input data for stochastic gradient descent
             indices = np.arange(num_samples)
@@ -68,7 +68,7 @@ class MultilayerPerceptron:
                 # perform back propagation
                 self.backprop(y_pred, y_batch)
 
-                if _ % 100 == 0:
+                if l % 100 == 0:
                     print(f"Current accuracy of the model: {accuracy(y_batch, y_pred)} ")
                 
     

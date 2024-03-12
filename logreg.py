@@ -14,6 +14,9 @@ class LogisticRegression:
 
     def fit(self, data, targets):
 
+        # add bias term to input data
+        data = np.hstack([data, np.ones((data.shape[0], 1))])
+
         num_samples, num_features = data.shape
         num_classes = targets.shape[1]
         self.initialize_weights(num_features, num_classes)
@@ -47,6 +50,10 @@ class LogisticRegression:
 
                 
     def predict(self, X):
+
+        # add bias term to input data
+        X = np.hstack([X, np.ones((X.shape[0], 1))])
+
         z = np.dot(X, self.weights)
         prediction = softmax(z)
         return prediction

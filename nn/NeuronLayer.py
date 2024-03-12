@@ -5,7 +5,8 @@ from numpy.typing import NDArray
 class NeuronLayer:
 
     def __init__(self, num_incoming_connections, num_neurons, activation_func, deriv_activation=None):
-        self.weights = np.random.randn(num_neurons, num_incoming_connections) # num units in layer X num weights to layer
+        self.weights = np.random.randn(num_neurons, num_incoming_connections + 1) # num units in layer X num weights to layer, +1 for bias
+        print("Layer weights: ", self.weights)
         self.activation_func = activation_func
         self.deriv_func = deriv_activation
 
@@ -15,7 +16,10 @@ class NeuronLayer:
             @input : numpy array of input data
             return : output from the model based on the given input
             '''
-        self.input = input
+        # Add a column of ones to the input data for the bias
+        bias_input = np.hstack([input, np.ones((input.shape[0], 1))])
+
+        self.input = bias_input
         self.output = self.activation_func(np.dot(self.input, self.weights.T))
         return self.output
     
@@ -31,12 +35,13 @@ class NeuronLayer:
         error = self.deriv_func(self.output) * output_error
         gradient = np.dot(error.T, self.input)
 
+        # calculate input error for previous layer
+        input_error = np.dot(error, self.weights)
+
         # update the weights for this layer
         self.weights -= learning_rate * gradient
 
-        # calculate input error for previous layer
-        input_error = np.dot(error, self.weights)
-        return input_error
+        return input_error[:, :-1]
     
     @staticmethod
     def tanh(z: NDArray):
