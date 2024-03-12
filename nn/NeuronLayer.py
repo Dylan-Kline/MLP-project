@@ -45,7 +45,8 @@ class NeuronLayer:
             @ z : numpy array from the dot product of weights and input data
             @ return : output from tanh function
             '''
-        return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))
+        #return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))
+        return np.tanh(z)
     
     @staticmethod
     def tanh_derivative(z: NDArray):

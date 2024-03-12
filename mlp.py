@@ -11,6 +11,11 @@ class MultilayerPerceptron:
         '''
     def __init__(self):
 
+        # Hyperparameters for model
+        self.learning_rate = 0.03
+        self.iterations = 100000
+        self.batch_size = 16 # size of stochastic batches
+
         # Parameters for neural network layers
         self.activation_functions = [NeuronLayer.tanh] # activation for each hidden layer and the output layer
         self.activation_derivatives = [NeuronLayer.tanh_derivative, NeuronLayer.tanh_derivative]
@@ -24,12 +29,6 @@ class MultilayerPerceptron:
             
         # Add output layer to layers list
         self.layers.append(OutputLayer(self.layer_sizes[-2], self.layer_sizes[-1], softmax, self.activation_derivatives[1]))
-
-        print(len(self.layers))
-        # Hyperparameters for model
-        self.learning_rate = 0.03
-        self.iterations = 100
-        self.batch_size = 16 # size of stochastic batches
 
     def fit(self, x: NDArray, y: NDArray):
         '''
