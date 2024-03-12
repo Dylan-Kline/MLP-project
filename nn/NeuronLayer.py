@@ -15,9 +15,9 @@ class NeuronLayer:
             @input : numpy array of input data
             return : output from the model based on the given input
             '''
-        
+        print(self.weights.shape, input.shape)
         self.input = input
-        self.output = self.activation_func(np.dot(self.weights, self.input))
+        self.output = self.activation_func(np.dot(self.input, self.weights.T))
         return self.output
     
     def backward(self, output_error: NDArray, learning_rate: float):

@@ -1,5 +1,6 @@
 from util.util import *
 from logreg import LogisticRegression
+from mlp import MultilayerPerceptron
 from matplotlib import pyplot as plt
 
 def main():
@@ -20,5 +21,12 @@ def main():
     Y = model.predict(X)
     acc_train = accuracy(T, Y)
     print(acc_train)
+
+    mlp_model = MultilayerPerceptron()
+    mlp_model.fit(X, T)
+    Y = mlp_model.predict(X)
+    #acc_train = accuracy(T, Y)
+    #print(acc_train)
+    print(Y.shape, Y)
     
 main() 

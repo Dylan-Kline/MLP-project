@@ -1,5 +1,6 @@
+from util.util import *
 import numpy as np
-from nn import NeuronLayer
+from nn.NeuronLayer import NeuronLayer
 from numpy.typing import NDArray
 
 class OutputLayer(NeuronLayer):
