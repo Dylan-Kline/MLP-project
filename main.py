@@ -16,23 +16,14 @@ def main():
 
     X = normailze_data(X)
 
+    # Train and evaluate the Logistic Regression Model
+    model = LogisticRegression()
+    model.fit(X, T)
+    Y = model.predict(X)
+    acc_train = accuracy(T, Y)
+    print(acc_train)
 
-    # X = np.array([1.5, 2.1])
-    # # Reshape X to be a 2D array with 1 row and 3 columns
-    # X = X.reshape(1, -1)
-    # T = np.array([1.0])
-
-    # print(X.shape)
-
-    # T = toHotEncoding(T, 2)
-    # print(T)
-    
-    # model = LogisticRegression()
-    # model.fit(X, T)
-    # Y = model.predict(X)
-    # acc_train = accuracy(T, Y)
-    # print(acc_train)
-
+    # Train and evaluate the MLP Model
     mlp_model = MultilayerPerceptron()
     mlp_model.fit(X, T)
     Y = mlp_model.predict(X)
