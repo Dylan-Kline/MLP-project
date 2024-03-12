@@ -25,8 +25,7 @@ def main():
     mlp_model = MultilayerPerceptron()
     mlp_model.fit(X, T)
     Y = mlp_model.predict(X)
-    #acc_train = accuracy(T, Y)
-    #print(acc_train)
-    print(Y.shape, Y)
+    acc_train = accuracy(T, Y)
+    print(acc_train)
     
 main() 

@@ -14,12 +14,14 @@ class OutputLayer(NeuronLayer):
             '''
 
         # compute the error and gradient for the current layer 
-        output_error = predictions - true_labels
-        gradient = np.dot(output_error, self.input.T)
+        output_error = true_labels - predictions
+        gradient = np.dot(output_error.T, self.input)
+
+        # input error
+        input_error = np.dot(output_error, self.weights)
 
         # update the weights for this layer
         self.weights -= learning_rate * gradient
 
         # calculate input error for previous layer
-        input_error = np.dot(self.weights.T, output_error)
         return input_error

@@ -15,7 +15,6 @@ class NeuronLayer:
             @input : numpy array of input data
             return : output from the model based on the given input
             '''
-        print(self.weights.shape, input.shape)
         self.input = input
         self.output = self.activation_func(np.dot(self.input, self.weights.T))
         return self.output
@@ -30,13 +29,13 @@ class NeuronLayer:
 
         # compute the error and gradient for the current layer 
         error = self.deriv_func(self.output) * output_error
-        gradient = np.dot(error, self.input.T)
+        gradient = np.dot(error.T, self.input)
 
         # update the weights for this layer
         self.weights -= learning_rate * gradient
 
         # calculate input error for previous layer
-        input_error = np.dot(self.weights.T, error)
+        input_error = np.dot(error, self.weights)
         return input_error
     
     @staticmethod
@@ -57,3 +56,7 @@ class NeuronLayer:
             '''
         
         return 1 - NeuronLayer.tanh(z) ** 2
+    
+    def print_weights(self):
+        print(self.weights.shape)
+        print(self.weights)

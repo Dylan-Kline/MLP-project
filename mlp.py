@@ -25,9 +25,10 @@ class MultilayerPerceptron:
         # Add output layer to layers list
         self.layers.append(OutputLayer(self.layer_sizes[-2], self.layer_sizes[-1], softmax, self.activation_derivatives[1]))
 
+        print(len(self.layers))
         # Hyperparameters for model
         self.learning_rate = 0.03
-        self.iterations = 1000
+        self.iterations = 100
         self.batch_size = 16 # size of stochastic batches
 
     def fit(self, x: NDArray, y: NDArray):
@@ -58,9 +59,8 @@ class MultilayerPerceptron:
                 # propagate batches
                 y_pred = self.predict(x_batch)
 
-                # compute errors and back prop
-                error = y_batch - y_pred
-                self.backprop(error)
+                # perform back propagation
+                self.backprop(y_pred, y_batch)
 
                 if _ % 100 == 0:
                     print(f"Current accuracy of the model: {accuracy(y_batch, y_pred)} ")
@@ -77,11 +77,15 @@ class MultilayerPerceptron:
             output = layer.forward(output)
         return output
     
-    def backprop(self, output_error: NDArray):
+    def backprop(self, predictions: NDArray, true_labels: NDArray):
         '''
             Performs backpropagation on the current network model.
             @ output_error : numpy array of delta errors
             '''
-        error = output_error
-        for layer in reversed(self.layers):
-            error = layer.backward(error)
+        
+        # compute output error
+        error = self.layers[-1].backward(predictions, true_labels, self.learning_rate)
+
+        # Compute delta error for each hidden layer and update weights
+        for layer in reversed(self.layers[:-1]):
+            error = layer.backward(error, self.learning_rate)
