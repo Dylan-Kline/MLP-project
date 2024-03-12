@@ -12,14 +12,18 @@ class MultilayerPerceptron:
     def __init__(self):
 
         # Hyperparameters for model
-        self.learning_rate = 0.03
-        self.iterations = 100000
+        self.learning_rate = 0.3
+        self.iterations = 1000
         self.batch_size = 16 # size of stochastic batches
 
         # Parameters for neural network layers
         self.activation_functions = [NeuronLayer.tanh] # activation for each hidden layer and the output layer
         self.activation_derivatives = [NeuronLayer.tanh_derivative, NeuronLayer.tanh_derivative]
-        self.layer_sizes = [61, 10, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
+
+
+    def initialize_mlp(self, num_features: int):
+
+        self.layer_sizes = [num_features, 10, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
 
         # Creates the layers of the neural network
         self.layers = list()
@@ -38,6 +42,9 @@ class MultilayerPerceptron:
             '''
         
         num_samples, num_features = x.shape # rows and columns of the input data x, respectively
+        
+        # initialize model weights
+        self.initialize_mlp(num_features)
 
         # for each iteration propagate the inputs and back prop the error
         for _ in range(self.iterations):
