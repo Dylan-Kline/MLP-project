@@ -3,6 +3,7 @@ import numpy as np
 from numpy.typing import NDArray
 from nn.NeuronLayer import NeuronLayer
 from nn.OutputLayer import OutputLayer
+import pickle
 
 class MultilayerPerceptron:
 
@@ -17,16 +18,17 @@ class MultilayerPerceptron:
         self.batch_size = 64 # size of stochastic batches
 
         # Parameters for neural network layers
-        self.activation_functions = [NeuronLayer.tanh] # activation for each hidden layer and the output layer
-        self.activation_derivatives = [NeuronLayer.tanh_derivative, NeuronLayer.tanh_derivative]
-
+        self.activation_functions = [NeuronLayer.tanh, NeuronLayer.tanh, softmax] # activation for each hidden layer and the output layer
+        self.activation_derivatives = [NeuronLayer.tanh_derivative, NeuronLayer.tanh_derivative, NeuronLayer.tanh_derivative]
+        self.layer_sizes = None
 
     def initialize_mlp(self, num_features: int):
         '''
             Initializes the layers of the multilayer perceptron.
             @ num_features : number of features/attributes in the input data'''
-
-        self.layer_sizes = [num_features, 10, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
+        
+        if self.layer_sizes is None:
+            self.layer_sizes = self.layer_sizes = [num_features, 10, 150, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
 
         # Creates the layers of the neural network
         self.layers = list()
@@ -71,9 +73,9 @@ class MultilayerPerceptron:
                 # perform back propagation
                 self.backprop(y_pred, y_batch)
 
-            if l % 200 == 0:
-                    y_pred = self.predict(x)
-                    print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
+            # if l % 200 == 0:
+            #         y_pred = self.predict(x)
+            #         print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
                 
     
     def predict(self, inputs: NDArray):
@@ -99,3 +101,18 @@ class MultilayerPerceptron:
         # Compute delta error for each hidden layer and update weights
         for layer in reversed(self.layers[:-1]):
             error = layer.backward(error, self.learning_rate)
+
+    def save(self, path):
+        '''
+            Writes this mlp model to a file.
+            '''
+        with open(path, 'wb') as file:
+            pickle.dump(self, file)
+
+    @staticmethod
+    def load(filename):
+        '''
+        Load a model from a file using pickle.
+        '''
+        with open(filename, 'rb') as file:
+            return pickle.load(file)

@@ -1,5 +1,6 @@
 from util.util import *
 import numpy as np
+import pickle
 
 class LogisticRegression:
 
@@ -45,9 +46,9 @@ class LogisticRegression:
                 # update the weights
                 self.weights -= self.learning_rate * gradient
   
-            if _ % 100 == 0:
-                output = softmax(np.dot(data, self.weights))
-                print(f"Current accuracy of the model: {accuracy(targets, output)} ")
+            # if _ % 100 == 0:
+            #     output = softmax(np.dot(data, self.weights))
+            #     print(f"Current accuracy of the model: {accuracy(targets, output)} ")
 
                 
     def predict(self, X):
@@ -58,5 +59,20 @@ class LogisticRegression:
         z = np.dot(X, self.weights)
         prediction = softmax(z)
         return prediction
+    
+    def save(self, path):
+        '''
+            Writes this logreg model to a file.
+            '''
+        with open(path, 'wb') as file:
+            pickle.dump(self, file)
+
+    @staticmethod
+    def load(filename):
+        '''
+        Load a logreg model from a file using pickle.
+        '''
+        with open(filename, 'rb') as file:
+            return pickle.load(file)
      
 

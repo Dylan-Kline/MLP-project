@@ -5,7 +5,7 @@ from numpy.typing import NDArray
 class NeuronLayer:
 
     def __init__(self, num_incoming_connections, num_neurons, activation_func, deriv_activation=None):
-        self.weights = np.random.randn(num_neurons, num_incoming_connections + 1) # num units in layer X num weights to layer, +1 for bias
+        self.weights = np.random.randn(num_neurons, num_incoming_connections + 1) * 0.01 # num units in layer X num weights to layer, +1 for bias
         self.activation_func = activation_func
         self.deriv_func = deriv_activation
 
@@ -36,7 +36,7 @@ class NeuronLayer:
         gradient = np.dot(error.T, self.input)
 
         # calculate input error for previous layer
-        input_error = np.dot(error, self.weights[:, :-1])
+        input_error = np.dot(error, self.weights)[:, :-1]
 
         # update the weights for this layer
         self.weights -= learning_rate * gradient
@@ -66,3 +66,9 @@ class NeuronLayer:
     def print_weights(self):
         print(self.weights.shape)
         print(self.weights)
+
+    def get_weights(self):
+        return self.weights
+
+    def layer_unit_type(self):
+        return str(self.activation_func)
