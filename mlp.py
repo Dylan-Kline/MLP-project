@@ -14,13 +14,14 @@ class MultilayerPerceptron:
 
         # Hyperparameters for model
         self.learning_rate = 0.0003
-        self.iterations = 50000
-        self.batch_size = 256 # size of stochastic batches
+        self.iterations = 100000
+        self.batch_size = 128 # size of stochastic batches
 
         # Parameters for neural network layers
         self.activation_functions = list() # activation for each hidden layer and the output layer
         self.activation_derivatives = list()
         self.layer_sizes = None
+        self.layers = None
 
     def initialize_mlp(self, num_features: int):
         '''
@@ -28,7 +29,7 @@ class MultilayerPerceptron:
             @ num_features : number of features/attributes in the input data'''
         
         if self.layer_sizes is None:
-            self.layer_sizes = self.layer_sizes = [num_features, 20,  2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
+            self.layer_sizes = self.layer_sizes = [num_features, 11, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
 
             # init activation functions and derivatives to be used for each layer
             for i in range(len(self.layer_sizes) - 1):
@@ -75,9 +76,9 @@ class MultilayerPerceptron:
             # perform back propagation
             self.backprop(y_pred, y_batch)
 
-            if l % 1000 == 0:
-                    y_pred = self.predict(x)
-                    print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
+            # if l % 1000 == 0:
+            #         y_pred = self.predict(x)
+            #         print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
                 
     
     def predict(self, inputs: NDArray):
