@@ -13,13 +13,13 @@ class MultilayerPerceptron:
     def __init__(self):
 
         # Hyperparameters for model
-        self.learning_rate = 0.003
-        self.iterations = 1000
-        self.batch_size = 64 # size of stochastic batches
+        self.learning_rate = 0.0003
+        self.iterations = 50000
+        self.batch_size = 256 # size of stochastic batches
 
         # Parameters for neural network layers
-        self.activation_functions = [NeuronLayer.tanh, NeuronLayer.tanh, softmax] # activation for each hidden layer and the output layer
-        self.activation_derivatives = [NeuronLayer.tanh_derivative, NeuronLayer.tanh_derivative, NeuronLayer.tanh_derivative]
+        self.activation_functions = list() # activation for each hidden layer and the output layer
+        self.activation_derivatives = list()
         self.layer_sizes = None
 
     def initialize_mlp(self, num_features: int):
@@ -28,16 +28,26 @@ class MultilayerPerceptron:
             @ num_features : number of features/attributes in the input data'''
         
         if self.layer_sizes is None:
-            self.layer_sizes = self.layer_sizes = [num_features, 10, 150, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
+            self.layer_sizes = self.layer_sizes = [num_features, 20,  2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
+
+            # init activation functions and derivatives to be used for each layer
+            for i in range(len(self.layer_sizes) - 1):
+                # hidden layers
+                self.activation_functions.append(NeuronLayer.tanh) 
+                self.activation_derivatives.append(NeuronLayer.tanh_derivative)
+
+            # output layer
+            self.activation_functions.append(softmax) 
+            self.activation_derivatives.append(NeuronLayer.tanh_derivative)
 
         # Creates the layers of the neural network
         self.layers = list()
         for i in range(len(self.layer_sizes) - 2):
-            self.layers.append(NeuronLayer(self.layer_sizes[i], self.layer_sizes[i+1], 
+            self.layers.append(NeuronLayer(self.layer_sizes[i] + 1, self.layer_sizes[i+1], 
                                            self.activation_functions[i], self.activation_derivatives[i]))
             
         # Add output layer to layers list
-        self.layers.append(OutputLayer(self.layer_sizes[-2], self.layer_sizes[-1], softmax, self.activation_derivatives[1]))
+        self.layers.append(OutputLayer(self.layer_sizes[-2] + 1, self.layer_sizes[-1], softmax, self.activation_derivatives[1]))
 
     def fit(self, x: NDArray, y: NDArray):
         '''
@@ -54,28 +64,20 @@ class MultilayerPerceptron:
         # for each iteration propagate the inputs and back prop the error
         for l in range(self.iterations):
 
-            # shuffle the input data for stochastic gradient descent
-            indices = np.arange(num_samples)
-            np.random.shuffle(indices)
-            x_shuffled = x[indices]
-            y_shuffled = y[indices]
+            # Randomly sample a batch from the dataset
+            indices = np.random.choice(num_samples, self.batch_size, replace=False)
+            x_batch = x[indices]
+            y_batch = y[indices]
             
-            # perform batch stochastic gradient descent
-            for i in range(0, num_samples, self.batch_size):
+            # propagate batches
+            y_pred = self.predict(x_batch)
 
-                # create input and true output batchs
-                x_batch = x_shuffled[i:i + self.batch_size]
-                y_batch = y_shuffled[i:i + self.batch_size]
+            # perform back propagation
+            self.backprop(y_pred, y_batch)
 
-                # propagate batches
-                y_pred = self.predict(x_batch)
-
-                # perform back propagation
-                self.backprop(y_pred, y_batch)
-
-            # if l % 200 == 0:
-            #         y_pred = self.predict(x)
-            #         print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
+            if l % 1000 == 0:
+                    y_pred = self.predict(x)
+                    print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
                 
     
     def predict(self, inputs: NDArray):
@@ -116,3 +118,10 @@ class MultilayerPerceptron:
         '''
         with open(filename, 'rb') as file:
             return pickle.load(file)
+    
+    def print_weights(self):
+        '''
+        Outputs the model's weights to console.
+        '''
+        for layer in self.layers:
+            print(layer.get_weights())

@@ -5,7 +5,8 @@ from numpy.typing import NDArray
 class NeuronLayer:
 
     def __init__(self, num_incoming_connections, num_neurons, activation_func, deriv_activation=None):
-        self.weights = np.random.randn(num_neurons, num_incoming_connections + 1) * 0.01 # num units in layer X num weights to layer, +1 for bias
+        self.weights = np.random.randn(num_neurons, num_incoming_connections) * 0.01 # num units in layer X num weights to layer, +1 for bias
+        print(self.weights.shape)
         self.activation_func = activation_func
         self.deriv_func = deriv_activation
 

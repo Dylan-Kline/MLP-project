@@ -20,7 +20,7 @@ def main():
     model = LogisticRegression()
     model.fit(X, T)
     Y = model.predict(X)
-    acc_train = accuracy(T, Y)
+    acc_train = accuracy(Y, T)
     print(acc_train)
 
     # Save logistic regression model
