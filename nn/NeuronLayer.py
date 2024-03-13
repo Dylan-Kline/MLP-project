@@ -17,13 +17,12 @@ class NeuronLayer:
             '''
         # Add a column of ones to the input data for the bias
         bias_input = np.hstack([input, np.ones((input.shape[0], 1))])
-        #print(bias_input)
 
         self.input = bias_input
         self.output = self.activation_func(np.dot(self.input, self.weights.T))
         return self.output
     
-    def backward(self, output_error: NDArray, learning_rate: float):
+    def backward(self, output_error: NDArray, learning_rate: float, lambda_reg: float):
         '''
             Performs delta error backpropagation for the current layer.
             @ output_error : errors from the following layer
@@ -35,11 +34,15 @@ class NeuronLayer:
         error = self.deriv_func(self.output) * output_error
         gradient = np.dot(error.T, self.input)
 
+        # Compute regularization term
+        reg_term = lambda_reg * self.weights
+        reg_term[:, -1] = 0 # exclude bias from regularization
+
         # calculate input error for previous layer
         input_error = np.dot(error, self.weights)[:, :-1]
 
         # update the weights for this layer
-        self.weights -= learning_rate * gradient
+        self.weights -= learning_rate * (gradient + reg_term)
 
         return input_error
     
@@ -61,7 +64,7 @@ class NeuronLayer:
             return : output from tanh prime
             '''
         
-        return (1 - (NeuronLayer.tanh(z) ** 2))
+        return (1 - (np.tanh(z) ** 2))
     
     def print_weights(self):
         print(self.weights.shape)

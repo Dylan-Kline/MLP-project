@@ -23,6 +23,9 @@ def main():
     acc_train = accuracy(Y, T)
     print(acc_train)
 
+    Y = model.predict(X_val)
+    acc_train = accuracy(Y, T_val)
+
     # Save logistic regression model
     model.save("logreg.model")
 
@@ -32,6 +35,9 @@ def main():
     Y = mlp_model.predict(X)
     acc_train2 = accuracy(T, Y)
     print(acc_train2)
+
+    Y = mlp_model.predict(X_val)
+    acc_train2 = accuracy(Y, T_val)
 
     # Save mlp model
     mlp_model.save("mlp.model")

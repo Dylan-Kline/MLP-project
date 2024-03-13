@@ -14,8 +14,10 @@ class MultilayerPerceptron:
 
         # Hyperparameters for model
         self.learning_rate = 0.0003
-        self.iterations = 100000
+        self.iterations = 25000
         self.batch_size = 128 # size of stochastic batches
+        self.decay_rate = 0.0 # controls the rate of learning rate decay
+        self.lambda_reg = 0.0
 
         # Parameters for neural network layers
         self.activation_functions = list() # activation for each hidden layer and the output layer
@@ -29,7 +31,7 @@ class MultilayerPerceptron:
             @ num_features : number of features/attributes in the input data'''
         
         if self.layer_sizes is None:
-            self.layer_sizes = self.layer_sizes = [num_features, 11, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
+            self.layer_sizes = self.layer_sizes = [num_features, 10, 10, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
 
             # init activation functions and derivatives to be used for each layer
             for i in range(len(self.layer_sizes) - 1):
@@ -62,6 +64,9 @@ class MultilayerPerceptron:
         # initialize model weights
         self.initialize_mlp(num_features)
 
+        if num_samples < self.batch_size:
+                self.batch_size = num_samples // 6
+
         # for each iteration propagate the inputs and back prop the error
         for l in range(self.iterations):
 
@@ -69,16 +74,19 @@ class MultilayerPerceptron:
             indices = np.random.choice(num_samples, self.batch_size, replace=False)
             x_batch = x[indices]
             y_batch = y[indices]
-            
+
             # propagate batches
             y_pred = self.predict(x_batch)
-
+            
             # perform back propagation
             self.backprop(y_pred, y_batch)
 
-            # if l % 1000 == 0:
-            #         y_pred = self.predict(x)
-            #         print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
+            if l % 1000 == 0:
+                    y_pred = self.predict(x)
+                    print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
+
+            # Decay the learning rate as iterations progress
+            self.learning_rate = self.learning_rate / (1.0 + self.decay_rate * float(l))
                 
     
     def predict(self, inputs: NDArray):
@@ -90,6 +98,7 @@ class MultilayerPerceptron:
         output = inputs
         for layer in self.layers:
             output = layer.forward(output)
+            #print(output)
         return output
     
     def backprop(self, predictions: NDArray, true_labels: NDArray):
@@ -99,11 +108,11 @@ class MultilayerPerceptron:
             '''
         
         # compute output error
-        error = self.layers[-1].backward(predictions, true_labels, self.learning_rate)
+        error = self.layers[-1].backward(predictions, true_labels, self.learning_rate, self.lambda_reg)
 
         # Compute delta error for each hidden layer and update weights
         for layer in reversed(self.layers[:-1]):
-            error = layer.backward(error, self.learning_rate)
+            error = layer.backward(error, self.learning_rate, self.lambda_reg)
 
     def save(self, path):
         '''

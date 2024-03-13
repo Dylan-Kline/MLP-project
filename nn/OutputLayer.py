@@ -5,7 +5,7 @@ from numpy.typing import NDArray
 
 class OutputLayer(NeuronLayer):
 
-    def backward(self, predictions: NDArray, true_labels: NDArray, learning_rate: float):
+    def backward(self, predictions: NDArray, true_labels: NDArray, learning_rate: float, lambda_reg: float):
         '''
             Performs delta error backpropagation for the current layer.
             @ output_error : errors from the following layer
@@ -17,11 +17,15 @@ class OutputLayer(NeuronLayer):
         output_error = predictions - true_labels
         gradient = np.dot(output_error.T, self.input)
 
+        # Compute regularization term
+        reg_term = lambda_reg * self.weights
+        reg_term[:, -1] = 0 # exclude bias from regularization
+
         # input error
         input_error = np.dot(output_error, self.weights)[:, :-1]
 
         # update the weights for this layer
-        self.weights -= learning_rate * gradient
+        self.weights -= learning_rate * (gradient + reg_term)
 
         # calculate input error for previous layer
         return input_error

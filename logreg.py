@@ -6,9 +6,10 @@ class LogisticRegression:
 
     def __init__(self):
         self.weights = None
-        self.learning_rate = 0.03
-        self.iterations = 100000
-        self.batch_size = 128
+        self.learning_rate = 0.001
+        self.iterations = 25000
+        self.batch_size = 256
+        self.lambda_reg = 0.0
 
     def initialize_weights(self, num_features, num_classes):
         self.weights = np.random.normal(0, 1, (num_features, num_classes)) # num features contains +1 for bias term
@@ -21,6 +22,9 @@ class LogisticRegression:
         num_samples, num_features = data.shape
         num_classes = targets.shape[1]
         self.initialize_weights(num_features, num_classes)
+
+        if num_samples < self.batch_size:
+                self.batch_size = num_samples // 6
         
         for _ in range(self.iterations):
             
@@ -36,17 +40,21 @@ class LogisticRegression:
             
             # Gradient Calculations
             gradient = np.dot(x_batch.T, error)
+
+            # Compute regularization term
+            reg_term = self.lambda_reg * self.weights
+            reg_term[:, -1] = 0 # exclude bias from regularization
             
             # update the weights
-            self.weights -= self.learning_rate * gradient
+            self.weights -= self.learning_rate * (gradient + reg_term)
 
             y_pred = softmax(np.dot(data, self.weights))
-            if accuracy(targets, y_pred) > 0.65:
-                break
+            # if accuracy(targets, y_pred) > 0.65:
+            #     break
   
-            # if _ % 100 == 0:
-            #     output = softmax(np.dot(data, self.weights))
-            #     print(f"Current accuracy of the model: {accuracy(targets, output)} ")
+            if _ % 10000 == 0:
+                output = softmax(np.dot(data, self.weights))
+                print(f"Current accuracy of the model: {accuracy(targets, output)} ")
 
                 
     def predict(self, X):
