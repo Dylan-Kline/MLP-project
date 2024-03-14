@@ -1,4 +1,4 @@
-from util.util import *
+from util import *
 import numpy as np
 from numpy.typing import NDArray
 from nn.NeuronLayer import NeuronLayer
@@ -14,10 +14,10 @@ class MultilayerPerceptron:
 
         # Hyperparameters for model
         self.learning_rate = 0.0003
-        self.iterations = 25000
-        self.batch_size = 128 # size of stochastic batches
-        self.decay_rate = 0.0 # controls the rate of learning rate decay
-        self.lambda_reg = 0.0
+        self.iterations = 10000
+        self.batch_size = 256 # size of stochastic batches
+        self.decay_rate = 0.00000002 # controls the rate of learning rate decay
+        self.lambda_reg = .001
 
         # Parameters for neural network layers
         self.activation_functions = list() # activation for each hidden layer and the output layer
@@ -31,7 +31,7 @@ class MultilayerPerceptron:
             @ num_features : number of features/attributes in the input data'''
         
         if self.layer_sizes is None:
-            self.layer_sizes = self.layer_sizes = [num_features, 10, 10, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
+            self.layer_sizes = self.layer_sizes = [num_features, 10, 32, 16, 8, 4, 2] # sizes for each layer from the input (index 0) to output layer (index n - 1)
 
             # init activation functions and derivatives to be used for each layer
             for i in range(len(self.layer_sizes) - 1):
@@ -59,6 +59,10 @@ class MultilayerPerceptron:
             @ y : numpy array of one-hot encoding of the true outputs
             '''
 
+        # normalize the input data
+        x = normailze_data(x)
+
+        # Grab dimensions of input data
         num_samples, num_features = x.shape # rows and columns of the input data x, respectively
         
         # initialize model weights
@@ -76,26 +80,40 @@ class MultilayerPerceptron:
             y_batch = y[indices]
 
             # propagate batches
-            y_pred = self.predict(x_batch)
+            y_pred = self.predict_normalized(x_batch)
             
             # perform back propagation
             self.backprop(y_pred, y_batch)
 
             if l % 1000 == 0:
-                    y_pred = self.predict(x)
-                    print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
+                y_pred = self.predict_normalized(x)
+                print(f"Current accuracy of the model: {accuracy(y, y_pred)} ")
 
             # Decay the learning rate as iterations progress
             self.learning_rate = self.learning_rate / (1.0 + self.decay_rate * float(l))
                 
     
-    def predict(self, inputs: NDArray):
+    def predict_normalized(self, inputs: NDArray):
         '''
             Performs forward propagation with the given input data.
-            @ inputs : inputs data array
+            @ inputs : normalized input data array
             return : prediction of model from forward pass of input
             '''
         output = inputs
+        for layer in self.layers:
+            output = layer.forward(output)
+            #print(output)
+        return output
+    
+    def predict(self, input: NDArray):
+        '''
+            Performs forward propagation with the given input data.
+            @ inputs : unnormalized input data array
+            return : prediction of model from forward pass of input
+            '''
+        input = normailze_data(input)
+
+        output = input
         for layer in self.layers:
             output = layer.forward(output)
             #print(output)

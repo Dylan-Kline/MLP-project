@@ -1,4 +1,4 @@
-from util.util import *
+from util import *
 import numpy as np
 import pickle
 
@@ -6,8 +6,8 @@ class LogisticRegression:
 
     def __init__(self):
         self.weights = None
-        self.learning_rate = 0.001
-        self.iterations = 25000
+        self.learning_rate = 0.003
+        self.iterations = 50000
         self.batch_size = 256
         self.lambda_reg = 0.0
 
@@ -15,6 +15,9 @@ class LogisticRegression:
         self.weights = np.random.normal(0, 1, (num_features, num_classes)) # num features contains +1 for bias term
 
     def fit(self, data, targets):
+
+        # Normalize the data
+        data = normailze_data(data)
 
         # add bias term to input data
         data = np.hstack([data, np.ones((data.shape[0], 1))])
@@ -58,6 +61,9 @@ class LogisticRegression:
 
                 
     def predict(self, X):
+
+        # normalize the data
+        X = normailze_data(X)
 
         # add bias term to input data
         X = np.hstack([X, np.ones((X.shape[0], 1))])
