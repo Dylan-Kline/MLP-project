@@ -24,24 +24,3 @@ def loadDataset(filename):
     N=X.shape[0]  # number of observations
     D=X.shape[1]  # number of features per observation
     return X, T
-
-def normailze_data(data: NDArray):
-    """
-    Perform min-max normalization on a dataset.
-    Each feature (column) is scaled to the range [0, 1] using the formula:
-    (x - min) / (max - min)
-
-    @ data: numpy array of data to be normalized
-    return : normalized data
-    """
-
-    min_values = data.min(axis=0)
-    max_values = data.max(axis=0)
-
-    # Avoid division by zero in case max and min values are the same
-    range_values = max_values - min_values
-    range_values[range_values == 0] = 1
-
-    # Apply the min-max normalization
-    normalized_data = (data - min_values) / range_values
-    return normalized_data

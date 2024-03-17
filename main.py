@@ -1,12 +1,11 @@
 from util import *
 from logreg import LogisticRegression
 from mlp import MultilayerPerceptron
-from matplotlib import pyplot as plt
 
 def main():
     
-    path = "data/loans.train"
-    validation = "data/loans.val"
+    path = "data/water.train"
+    validation = "data/water.val"
 
     X, T = loadDataset(path)
     X_val, T_val = loadDataset(validation)
@@ -23,6 +22,7 @@ def main():
 
     Y = model.predict(X_val)
     acc_train = accuracy(Y, T_val)
+    print(acc_train)
 
     # Save logistic regression model
     model.save("logreg_new.model")
@@ -41,7 +41,7 @@ def main():
     mlp_model.save("mlp_new.model")
 
     # Load saved mlp model
-    loaded_mlp = MultilayerPerceptron.load("mlp_new.model")
+    loaded_mlp = MultilayerPerceptron.load("water.model")
     Y = loaded_mlp.predict(X_val)
     acc_train3 = accuracy(Y, T_val)
     print(acc_train3)
